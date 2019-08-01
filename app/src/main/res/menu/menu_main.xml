@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.test.firebasepush.MainActivity">
+    <item
+        android:id="@+id/menu_all_item"
+        android:orderInCategory="100"
+        android:title="All Item"
+        app:showAsAction="never" />
+</menu>
