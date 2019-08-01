@@ -2,11 +2,11 @@ package com.test.firebasepush;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.test.firebasepush.api.PostSend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class ListShowActivity extends AppCompatActivity implements ListShowAdapt
     public ListShowAdapter allEmployeeAdapter;
     private DatabaseReference databaseReference;
     public ProgressDialog progressDialog;
+    public PostSend postSend;
 
 
     @Override
@@ -56,6 +58,8 @@ public class ListShowActivity extends AppCompatActivity implements ListShowAdapt
         databaseReference = FirebaseDatabase.getInstance().getReference();
         progressDialog = new ProgressDialog(ListShowActivity.this);
         progressDialog.setMessage("Loading ....");
+
+        postSend = new PostSend(getApplicationContext());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -96,26 +100,25 @@ public class ListShowActivity extends AppCompatActivity implements ListShowAdapt
 
     @Override
     public void onClickList(int position, Post post) {
-
+        CallUpdateAndDeleteDialog(post.getPostId(), post.getName(), post.getDesignation());
     }
 
-    private void CallUpdateAndDeleteDialog(final String userid, String username, final String email, String monumber) {
-
+    private void CallUpdateAndDeleteDialog(final String userid, String name, final String designation) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         LayoutInflater inflater = getLayoutInflater();
-        final View dialogView = inflater.inflate(R.layout., null);
+        final View dialogView = inflater.inflate(R.layout.dialog_update, null);
         dialogBuilder.setView(dialogView);
         //Access Dialog views
-        final EditText updateTextname = (EditText) dialogView.findViewById(R.id.updateTextname);
-        final EditText updateTextemail = (EditText) dialogView.findViewById(R.id.updateTextemail);
-        final EditText updateTextmobileno = (EditText) dialogView.findViewById(R.id.updateTextmobileno);
-        updateTextname.setText(username);
-        updateTextemail.setText(email);
-        updateTextmobileno.setText(monumber);
+        final EditText updateName = (EditText) dialogView.findViewById(R.id.updateTextname);
+        final EditText updateDesignation = (EditText) dialogView.findViewById(R.id.updateTextDesignation);
+
+        updateName.setText(name);
+        updateDesignation.setText(designation);
+
         final Button buttonUpdate = (Button) dialogView.findViewById(R.id.buttonUpdateUser);
         final Button buttonDelete = (Button) dialogView.findViewById(R.id.buttonDeleteUser);
         //username for set dialog title
-        dialogBuilder.setTitle(username);
+        dialogBuilder.setTitle("Dialog");
         final AlertDialog b = dialogBuilder.create();
         b.show();
 
@@ -123,21 +126,17 @@ public class ListShowActivity extends AppCompatActivity implements ListShowAdapt
         buttonUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String name = updateTextname.getText().toString().trim();
-                String email = updateTextemail.getText().toString().trim();
-                String mobilenumber = updateTextmobileno.getText().toString().trim();
-                //checking if the value is provided or not Here, you can Add More Validation as you required
 
-                if (!TextUtils.isEmpty(name)) {
-                    if (!TextUtils.isEmpty(email)) {
-                        if (!TextUtils.isEmpty(mobilenumber)) {
-                            //Method for update data
-                            updateUser(userid, name, email, mobilenumber);
-                            b.dismiss();
-                        }
-                    }
+                String name = updateName.getText().toString();
+                String designation = updateDesignation.getText().toString().trim();
+
+                if (updateName.getText().toString().trim().length() > 0 && updateDesignation.getText().toString().trim().length() > 0) {
+                    updateUser(userid, name, designation);
+                } else {
+                    updateName.setError("Fill it");
+                    updateDesignation.setError("Fill It");
                 }
-
+                b.dismiss();
             }
         });
 
@@ -151,5 +150,32 @@ public class ListShowActivity extends AppCompatActivity implements ListShowAdapt
             }
         });
     }
+
+    private boolean updateUser(String id, String name, String designation) {
+        //getting the specified User reference
+        DatabaseReference UpdateReference = FirebaseDatabase.getInstance().getReference("data").child(id);
+
+        Post post = new Post(name, designation, id);
+
+        UpdateReference.setValue(post);
+        Toast.makeText(getApplicationContext(), "User Updated", Toast.LENGTH_LONG).show();
+        allEmployeeAdapter.notifyDataSetChanged();
+        postSend.sendTopicNotification("List Update", "One list updated");
+        databaseQuary();
+        return true;
+    }
+
+    private boolean deleteUser(String id) {
+        //getting the specified User reference
+        DatabaseReference DeleteReference = FirebaseDatabase.getInstance().getReference("data").child(id);
+        //removing User
+        DeleteReference.removeValue();
+        Toast.makeText(getApplicationContext(), "User Deleted", Toast.LENGTH_LONG).show();
+        allEmployeeAdapter.notifyDataSetChanged();
+        postSend.sendTopicNotification("List Delete", "One list delete");
+        databaseQuary();
+        return true;
+    }
+
 
 }
