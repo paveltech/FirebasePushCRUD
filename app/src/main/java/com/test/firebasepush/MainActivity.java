@@ -37,23 +37,22 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity implements ListShowAdapter.onCallBack {
 
     public ProgressDialog progressDialog;
     public static final String TAG = MainActivity.class.getSimpleName();
     private DatabaseReference databaseReference;
-    @BindView(R.id.edit_text_name)
-    EditText name;
 
-    @BindView(R.id.edit_text_designation)
-    EditText designation;
     public PostSend postSend;
     public ApiInterface apiInterface;
 
     @BindView(R.id.recycleview)
     RecyclerView recyclerView;
     public ListShowAdapter allEmployeeAdapter;
+    public StringAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,26 +70,15 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
         progressDialog.setMessage("Loading ...");
         postSend = new PostSend(getApplicationContext());
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (name.getText().toString().trim().length() > 0 && designation.getText().toString().trim().length() > 0) {
-                    progressDialog.show();
-                    sendDateToFirebaseDatebase(name.getText().toString(), designation.getText().toString());
-                }
-            }
-        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        databaseQuary();
         subscribeToTopic();
+
     }
 
 
     private void sendDateToFirebaseDatebase(String name, String designation) {
-
         String key = databaseReference.push().getKey();
         Post post = new Post(name, designation, key);
 
@@ -236,15 +224,12 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         List<Post> postList = new ArrayList<>();
-
                         for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
                             Post post = dataSnapshot1.getValue(Post.class);
                             postList.add(post);
                         }
-
                         progressDialog.dismiss();
                         dataSetIntoAdapter(postList);
-
                     }
 
                     @Override
@@ -252,6 +237,38 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
                         progressDialog.dismiss();
                     }
                 });
+    }
+
+
+    @OnClick(R.id.button_show)
+    public void databaseArea() {
+        progressDialog.show();
+        databaseReference
+                .child("Area")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        ArrayList<String> stringArrayList = new ArrayList<>();
+
+                        for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                            String data = dataSnapshot1.getValue(String.class);
+                            stringArrayList.add(data);
+                        }
+                        progressDialog.dismiss();
+                        dataSetIntoStringAdapter(stringArrayList);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        progressDialog.dismiss();
+                    }
+                });
+    }
+
+
+    public void dataSetIntoStringAdapter(ArrayList<String> stringArrayList) {
+        adapter = new StringAdapter(getApplicationContext(), stringArrayList);
+        recyclerView.setAdapter(adapter);
     }
 
     public void dataSetIntoAdapter(List<Post> postList) {

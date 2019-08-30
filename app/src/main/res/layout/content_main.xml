@@ -15,39 +15,19 @@
         android:orientation="vertical">
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            tools:ignore="MissingConstraints">
-
-            <EditText
-                android:id="@+id/edit_text_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Name"
-                android:inputType="text"
-                android:singleLine="true" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/ic_hello" />
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
+        <Button
+            android:id="@+id/button_show"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            tools:ignore="MissingConstraints">
-
-            <EditText
-                android:id="@+id/edit_text_designation"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Designation"
-                android:inputType="text"
-                android:singleLine="true" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_gravity="center_horizontal"
+            android:text="Data Show" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycleview"
