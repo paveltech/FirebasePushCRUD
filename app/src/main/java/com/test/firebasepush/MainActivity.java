@@ -53,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
     public ListShowAdapter allEmployeeAdapter;
     public StringAdapter adapter;
 
+    public static int count = 0;
+    public static int apicount =0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -254,6 +257,11 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
                             String data = dataSnapshot1.getValue(String.class);
                             stringArrayList.add(data);
                         }
+                        apicount = stringArrayList.size();
+                        if (apicount>count){
+                            postSend.sendTopicNotification("Database Notification", "New Data Added");
+                        }
+                        count = apicount;
                         progressDialog.dismiss();
                         dataSetIntoStringAdapter(stringArrayList);
                     }
