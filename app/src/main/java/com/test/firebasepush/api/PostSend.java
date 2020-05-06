@@ -3,6 +3,7 @@ package com.test.firebasepush.api;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.test.firebasepush.R;
@@ -27,16 +28,21 @@ public class PostSend {
     public void sendTopicNotification(String title, String data) {
 
         JSONObject jsonObject = new JSONObject();
-        JSONObject dataJsonObject = new JSONObject();
+
+
         JSONObject notificationJsonObject = new JSONObject();
         JsonObject gsonObject = new JsonObject();
+
+        JSONObject dataObject = new JSONObject();
+
+
         try {
-            jsonObject.put("to", "/topics/push");
-            dataJsonObject.put("extra_information", "This is a some extra information");
-            //jsonObject.put("data", dataJsonObject);
+            jsonObject.put("to", "/topics/general");
+
             notificationJsonObject.put("title", "" + title);
-            notificationJsonObject.put("body", "" + data);
-            jsonObject.put("notification", notificationJsonObject);
+            notificationJsonObject.put("message", "" + data);
+            dataObject.put("data", notificationJsonObject);
+            jsonObject.put("data", dataObject);
 
 
         } catch (JSONException e) {
@@ -46,18 +52,22 @@ public class PostSend {
         JsonParser jsonParser = new JsonParser();
         gsonObject = (JsonObject) jsonParser.parse(jsonObject.toString());
 
+        Log.d("NOTIFICATION_JSON", "" + jsonObject.toString());
+
         Call<MessageResponse> responseCall = apiInterface.sendFirebasePush(context.getResources().getString(R.string.key), gsonObject);
         responseCall.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
-                Log.d("MainActivity", "" + response.isSuccessful());
+                Log.d("NOTIFICATION", "" + response.isSuccessful());
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
-                Log.d("MainActivity", "" + t.toString());
+                Log.d("NOTIFICATION", "" + t.toString());
             }
         });
 
     }
+
+
 }

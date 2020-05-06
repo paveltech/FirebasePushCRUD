@@ -245,6 +245,10 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
 
     @OnClick(R.id.button_show)
     public void databaseArea() {
+
+        postSend.sendTopicNotification("Database Notification", "New Data Added");
+
+        /*
         progressDialog.show();
         databaseReference
                 .child("Area")
@@ -271,6 +275,8 @@ public class MainActivity extends AppCompatActivity implements ListShowAdapter.o
                         progressDialog.dismiss();
                     }
                 });
+
+         */
     }
 
 

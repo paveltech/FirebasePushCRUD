@@ -3,7 +3,11 @@
     <string name="action_settings">Settings</string>
     <string name="msg_subscribed">Subscribed</string>
     <string name="msg_subscribe_failed">Subscribed Failed</string>
-    <string name="key">key=AAAAGD7kvOA:APA91bGxEoj6Vr5GSMNZF2U-UALfqJ_U9lXJCyeWwxdEFNKYG0oR3_Teo-C-FXpvE0hDr3dAJwmE5JjP4oSGlYv2Ieo5tqan2VhNZCtjMkMe25zMX7quHAqai02jZm9a0miXXEe97Y52</string>
+    <string name="key">key=AAAApdGqczQ:APA91bFzYbqDB7TsTXBsvg303X1qZzE6IwMi5Ux0FTIlrQCFGlrmNjVbCGmXitrKgmIt1SXeniLE92zFXKt9EEwXjtBmOO1A5fC-hUlNRzkUR1QY-dVOz_rZFxNGpWlXZni4c1ud8jVH</string>
+
+
+
+
     <string name="title_activity_list_show">ListShowActivity</string>
 
 
